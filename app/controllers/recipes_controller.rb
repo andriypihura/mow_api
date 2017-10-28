@@ -5,12 +5,12 @@ class RecipesController < ApplicationController
   def index
     @recipes = Recipe.all
 
-    render json: @recipes
+    json_response @recipes
   end
 
   # GET /recipes/1
   def show
-    render json: @recipe
+    json_response @recipe
   end
 
   # POST /recipes
@@ -18,18 +18,18 @@ class RecipesController < ApplicationController
     @recipe = Recipe.new(recipe_params)
 
     if @recipe.save
-      render json: @recipe, status: :created, location: @recipe
+      json_response @recipe, :created
     else
-      render json: @recipe.errors, status: :unprocessable_entity
+      json_response @recipe.errors, :unprocessable_entity
     end
   end
 
   # PATCH/PUT /recipes/1
   def update
     if @recipe.update(recipe_params)
-      render json: @recipe
+      json_response @recipe
     else
-      render json: @recipe.errors, status: :unprocessable_entity
+      json_response @recipe.errors, :unprocessable_entity
     end
   end
 
@@ -46,6 +46,6 @@ class RecipesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def recipe_params
-      params.fetch(:recipe, {})
+      params.permit(:title, :user_id)
     end
 end
