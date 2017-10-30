@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "Recipes", type: :request do
   let!(:user) { create(:user) }
-  let!(:recipe) { create(:recipe) }
-  let(:recipe_id) { recipe.id }
+  let!(:recipes) { create_list(:recipe, 10) }
+  let(:recipe_id) { recipes.first.id }
 
   describe "GET /recipes" do
     before { get '/recipes' }
@@ -11,7 +11,7 @@ RSpec.describe "Recipes", type: :request do
     it 'returns recipes' do
 
       expect(json).not_to be_empty
-      expect(json.size).to eq(1)
+      expect(json.size).to eq(10)
     end
 
     it 'returns status code 200' do
@@ -64,18 +64,17 @@ RSpec.describe "Recipes", type: :request do
       end
     end
 
-    #TODO fill it
     context 'when the request is invalid' do
-      # before { post '/recipes', params: { title: 'Foobar' } }
-      #
-      # it 'returns status code 422' do
-      #   expect(response).to have_http_status(422)
-      # end
-      #
-      # it 'returns a validation failure message' do
-      #   expect(response.body)
-      #     .to match(/Validation failed: Created by can't be blank/)
-      # end
+      before { post '/recipes', params: { title: 'Foobar' } }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(response.body)
+          .to match(/can't be blank/)
+      end
     end
   end
 

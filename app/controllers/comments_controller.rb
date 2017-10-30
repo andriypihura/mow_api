@@ -5,12 +5,12 @@ class CommentsController < ApplicationController
   def index
     @comments = Comment.all
 
-    render json: @comments
+    json_response @comments
   end
 
   # GET /comments/1
   def show
-    render json: @comment
+    json_response @comment
   end
 
   # POST /comments
@@ -18,18 +18,18 @@ class CommentsController < ApplicationController
     @comment = Comment.new(comment_params)
 
     if @comment.save
-      render json: @comment, status: :created, location: @comment
+      json_response @comment, :created
     else
-      render json: @comment.errors, status: :unprocessable_entity
+      json_response @comment.errors, :unprocessable_entity
     end
   end
 
   # PATCH/PUT /comments/1
   def update
     if @comment.update(comment_params)
-      render json: @comment
+      json_response @comment
     else
-      render json: @comment.errors, status: :unprocessable_entity
+      json_response @comment.errors, :unprocessable_entity
     end
   end
 
@@ -46,6 +46,6 @@ class CommentsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def comment_params
-      params.fetch(:comment, {})
+      params.permit(:message, :user_id, :recipe_id)
     end
 end
