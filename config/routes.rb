@@ -3,7 +3,8 @@ Rails.application.routes.draw do
 
   resources :users
   resources :recipes
-  resources :favorites
-  resources :likes
+  resources :menu_items
+  resources :menus
   resources :comments
+  resources :likes
 end
