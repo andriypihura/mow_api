@@ -5,31 +5,36 @@ class LikesController < ApplicationController
   def index
     @likes = Like.all
 
-    render json: @likes
+    json_response @likes
   end
 
   # GET /likes/1
   def show
-    render json: @like
+    json_response @like
   end
 
   # POST /likes
   def create
-    @like = Like.new(like_params)
-
-    if @like.save
-      render json: @like, status: :created, location: @like
+    @like = find_by_user_and_recipe_ids(params[:user_id], params[:recipe_id])
+    if @like.present?
+      redirect_to like_path(method: :put)
     else
-      render json: @like.errors, status: :unprocessable_entity
+      @like = Like.new(like_params)
+
+      if @like.save
+        json_response @like, :created
+      else
+        json_response @like.errors, :unprocessable_entity
+      end
     end
   end
 
   # PATCH/PUT /likes/1
   def update
     if @like.update(like_params)
-      render json: @like
+      json_response @like
     else
-      render json: @like.errors, status: :unprocessable_entity
+      json_response @like.errors, :unprocessable_entity
     end
   end
 
@@ -44,8 +49,12 @@ class LikesController < ApplicationController
       @like = Like.find(params[:id])
     end
 
+    def find_by_user_and_recipe_ids(user_id, recipe_id)
+      Like.where(user_id: user_id, recipe_id: recipe_id).first
+    end
+
     # Only allow a trusted parameter "white list" through.
     def like_params
-      params.fetch(:like, {})
+      params.permit(:value, :user_id, :recipe_id)
     end
 end

@@ -1,17 +1,17 @@
 require 'rails_helper'
 
-RSpec.describe "Recipes", type: :request do
+RSpec.describe "Menus", type: :request do
+  let!(:menu) { create(:menu) }
   let!(:user) { create(:user) }
-  let!(:recipes) { create_list(:recipe, 10) }
-  let(:recipe_id) { recipes.first.id }
+  let(:menu_id) { menu.id }
 
-  describe "GET /recipes" do
-    before { get '/recipes' }
+  describe "GET /menus" do
+    before { get '/menus' }
 
-    it 'returns recipes' do
+    it 'returns menus' do
 
       expect(json).not_to be_empty
-      expect(json.size).to eq(10)
+      expect(json.size).to eq(1)
     end
 
     it 'returns status code 200' do
@@ -19,14 +19,15 @@ RSpec.describe "Recipes", type: :request do
     end
   end
 
-  # Test suite for GET /recipes/:id
-  describe 'GET /recipes/:id' do
-    before { get "/recipes/#{recipe_id}" }
+  # Test suite for GET /menus/:id
+  describe 'GET /menus/:id' do
+    before { get "/menus/#{menu_id}" }
 
     context 'when the record exists' do
-      it 'returns the recipe' do
+      it 'returns the menu' do
         expect(json).not_to be_empty
-        expect(json['id']).to eq(recipe_id)
+        expect(json['id']).to eq(menu_id)
+        expect(json['user_id']).to eq(menu.user.id)
       end
 
       it 'returns status code 200' do
@@ -35,28 +36,29 @@ RSpec.describe "Recipes", type: :request do
     end
 
     context 'when the record does not exist' do
-      let(:recipe_id) { 100 }
+      let(:menu_id) { 100 }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
       end
 
       it 'returns a not found message' do
-        expect(response.body).to match(/Couldn't find Recipe/)
+        expect(response.body).to match(/Couldn't find Menu/)
       end
     end
   end
 
-  # Test suite for POST /recipes
-  describe 'POST /recipes' do
+  # Test suite for POST /menus
+  describe 'POST /menus' do
     # valid payload
-    let(:valid_attributes) { { title: 'Learn Elm', user_id: user.id } }
+    let(:valid_attributes) { { title: "Ttttttt sssss", user_id: user.id } }
 
     context 'when the request is valid' do
-      before { post '/recipes', params: valid_attributes }
+      before { post '/menus', params: valid_attributes }
 
-      it 'creates a recipe' do
-        expect(json['title']).to eq('Learn Elm')
+      it 'creates a menu' do
+        expect(json['title']).to eq("Ttttttt sssss")
+        expect(json['user_id']).to eq(user.id)
       end
 
       it 'returns status code 201' do
@@ -65,7 +67,7 @@ RSpec.describe "Recipes", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/recipes', params: { title: 'Foobar' } }
+      before { post '/menus', params: { title: "Ttttttt sssss" } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -73,20 +75,20 @@ RSpec.describe "Recipes", type: :request do
 
       it 'returns a validation failure message' do
         expect(response.body)
-          .to match(/can't be blank/)
+          .to match(/must exist/)
       end
     end
   end
 
-  # Test suite for PUT /recipes/:id
-  describe 'PUT /recipes/:id' do
-    let(:valid_attributes) { { title: 'Shopping' } }
+  # Test suite for PUT /menus/:id
+  describe 'PUT /menus/:id' do
+    let(:valid_attributes) { { title: "updated title" } }
 
     context 'when the record exists' do
-      before { put "/recipes/#{recipe_id}", params: valid_attributes }
+      before { put "/menus/#{menu_id}", params: valid_attributes }
 
       it 'updates the record' do
-        expect(json['title']).to eq('Shopping')
+        expect(json['title']).to eq("updated title")
       end
 
       it 'returns status code 200' do
@@ -95,9 +97,9 @@ RSpec.describe "Recipes", type: :request do
     end
   end
 
-  # Test suite for DELETE /recipes/:id
-  describe 'DELETE /recipes/:id' do
-    before { delete "/recipes/#{recipe_id}" }
+  # Test suite for DELETE /menus/:id
+  describe 'DELETE /menus/:id' do
+    before { delete "/menus/#{menu_id}" }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

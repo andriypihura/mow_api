@@ -1,5 +1,5 @@
 FactoryGirl.define do
   factory :user do
-    name { Faker::Lorem.word }
+    name { Faker::Name.unique.name }
   end
 end
