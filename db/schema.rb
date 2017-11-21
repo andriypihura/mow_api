@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 20171121132527) do
     t.string "ingredients"
     t.string "categories"
     t.string "complexity"
-    t.string "visibility", default: "t"
+    t.string "visibility", default: "for self"
     t.integer "time_consuming"
     t.integer "calories"
     t.index ["user_id"], name: "index_recipes_on_user_id"
