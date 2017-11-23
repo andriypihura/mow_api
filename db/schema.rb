@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171121132527) do
+ActiveRecord::Schema.define(version: 20171123144739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,8 @@ ActiveRecord::Schema.define(version: 20171121132527) do
     t.string "avatar_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "password_digest"
+    t.string "email"
   end
 
   add_foreign_key "menu_items", "menus"

@@ -1,26 +1,35 @@
 require 'rails_helper'
+require 'jwt'
 
 RSpec.describe "Users", type: :request do
-  let!(:users) { create_list(:user, 10) }
-  let(:user_id) { users.first.id }
+  let!(:user) { create(:user) }
+  let!(:user_id) { user.id }
+  let!(:token) do
+    post '/authenticate', params: { email: user.email, password: '12345678' }
+    json['auth_token']
+  end
 
   describe "GET /users" do
-    before { get '/users' }
-
     it 'returns users' do
+      get '/users', params: {}, headers: { 'Authorization' => token }
 
       expect(json).not_to be_empty
-      expect(json.size).to eq(10)
+      expect(json.size).to eq(1)
+      expect(json.first['id']).to eq(user_id)
     end
 
     it 'returns status code 200' do
+      get '/users', params: {}, headers: { 'Authorization' => token }
+
       expect(response).to have_http_status(200)
     end
   end
 
   # Test suite for GET /users/:id
   describe 'GET /users/:id' do
-    before { get "/users/#{user_id}" }
+    before do
+      get "/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
+    end
 
     context 'when the record exists' do
       it 'returns the user' do
@@ -49,7 +58,7 @@ RSpec.describe "Users", type: :request do
   # Test suite for POST /users
   describe 'POST /users' do
     # valid payload
-    let(:valid_attributes) { { name: 'Test User name' } }
+    let(:valid_attributes) { { name: 'Test User name', email: 'email@mail.com', password: '12345678', password_confirmation: '12345678' } }
 
     context 'when the request is valid' do
       before { post '/users', params: valid_attributes }
@@ -64,7 +73,7 @@ RSpec.describe "Users", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/users', params: { name: users.first.name } }
+      before { post '/users', params: { name: user.name } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)

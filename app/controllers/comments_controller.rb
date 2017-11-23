@@ -1,5 +1,7 @@
 class CommentsController < ApplicationController
+  skip_before_action :authenticate_request, only: [:index, :show]
   before_action :set_comment, only: [:show, :update, :destroy]
+  before_action :set_recipe, only: [:create]
 
   # GET /comments
   def index
@@ -15,7 +17,7 @@ class CommentsController < ApplicationController
 
   # POST /comments
   def create
-    @comment = Comment.new(comment_params)
+    @comment = @recipe.comments.new(comment_params)
 
     if @comment.save
       json_response @comment, :created
@@ -44,8 +46,12 @@ class CommentsController < ApplicationController
       @comment = Comment.find(params[:id])
     end
 
+    def set_recipe
+      @recipe = Recipe.find(params[:recipe_id])
+    end
+
     # Only allow a trusted parameter "white list" through.
     def comment_params
-      params.permit(:message, :user_id, :recipe_id)
+      params.permit(:message, :user_id)
     end
 end
