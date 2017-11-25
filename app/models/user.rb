@@ -7,4 +7,8 @@ class User < ApplicationRecord
   has_many :likes
 
   validates :name, uniqueness: true
+
+  def admin?
+    roles&.include? 'admin'
+  end
 end

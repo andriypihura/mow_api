@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   post 'authenticate', to: 'authentication#authenticate'
 
-  resources :users
+  resources :users, only: [:create, :show, :update, :destroy]
   resources :recipes
   resources :menu_items
   resources :menus

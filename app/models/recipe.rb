@@ -3,5 +3,9 @@ class Recipe < ApplicationRecord
   has_many :comments
   has_many :likes
 
-  validates :user_id, presence: true
+  validates :title, presence: true
+
+  def public?
+    visibility == 'public'
+  end
 end

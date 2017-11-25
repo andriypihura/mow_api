@@ -9,26 +9,10 @@ RSpec.describe "Users", type: :request do
     json['auth_token']
   end
 
-  describe "GET /users" do
-    it 'returns users' do
-      get '/users', params: {}, headers: { 'Authorization' => token }
-
-      expect(json).not_to be_empty
-      expect(json.size).to eq(1)
-      expect(json.first['id']).to eq(user_id)
-    end
-
-    it 'returns status code 200' do
-      get '/users', params: {}, headers: { 'Authorization' => token }
-
-      expect(response).to have_http_status(200)
-    end
-  end
-
   # Test suite for GET /users/:id
   describe 'GET /users/:id' do
     before do
-      get "/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
+      get "/users/#{user_id}"
     end
 
     context 'when the record exists' do
@@ -57,7 +41,6 @@ RSpec.describe "Users", type: :request do
 
   # Test suite for POST /users
   describe 'POST /users' do
-    # valid payload
     let(:valid_attributes) { { name: 'Test User name', email: 'email@mail.com', password: '12345678', password_confirmation: '12345678' } }
 
     context 'when the request is valid' do
@@ -91,7 +74,7 @@ RSpec.describe "Users", type: :request do
     let(:valid_attributes) { { name: 'New User name' } }
 
     context 'when the record exists' do
-      before { put "/users/#{user_id}", params: valid_attributes }
+      before { put "/users/#{user_id}", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'updates the record' do
         expect(json['name']).to eq('New User name')
@@ -105,10 +88,30 @@ RSpec.describe "Users", type: :request do
 
   # Test suite for DELETE /users/:id
   describe 'DELETE /users/:id' do
-    before { delete "/users/#{user_id}" }
 
-    it 'returns status code 204' do
-      expect(response).to have_http_status(204)
+    context 'when current_user admin' do
+      let!(:admin) { create(:user, :admin) }
+
+      before do
+        post '/authenticate', params: { email: admin.email, password: '12345678' }
+        admin_token = json['auth_token']
+        delete "/users/#{user_id}", params: {}, headers: { 'Authorization' => admin_token }
+      end
+
+      it 'returns status code 204' do
+        expect(response).to have_http_status(204)
+      end
+    end
+
+    context 'when current_user not admin' do
+
+      before do
+        delete "/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
+      end
+
+      it 'returns status code 204' do
+        expect(response).to have_http_status(401)
+      end
     end
   end
 end
