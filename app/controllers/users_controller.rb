@@ -1,12 +1,7 @@
 class UsersController < ApplicationController
+  skip_before_action :authenticate_request, only: [:create, :show]
   before_action :set_user, only: [:show, :update, :destroy]
-
-  # GET /users
-  def index
-    @users = User.all
-
-    json_response @users
-  end
+  before_action :has_access?, only: [:update, :destroy]
 
   # GET /users/1
   def show
@@ -35,17 +30,24 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   def destroy
-    @user.destroy
+    if current_user.admin?
+      @user.destroy
+    else
+      json_response({ error: 'Forbidden' }, 403)
+    end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def user_params
-      params.permit(:name)
-    end
+  def has_access?
+    json_response({ error: 'Forbidden' }, 403) unless current_user == @user || current_user.admin?
+  end
+
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.permit(:name, :email, :password, :password_confirmation, :roles)
+  end
 end

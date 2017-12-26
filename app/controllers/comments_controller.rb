@@ -1,21 +1,11 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: [:show, :update, :destroy]
-
-  # GET /comments
-  def index
-    @comments = Comment.all
-
-    json_response @comments
-  end
-
-  # GET /comments/1
-  def show
-    json_response @comment
-  end
+  before_action :set_recipe
+  before_action :set_comment, only: [:update, :destroy]
+  before_action :has_access?, only: [:update, :destroy]
 
   # POST /comments
   def create
-    @comment = Comment.new(comment_params)
+    @comment = @recipe.comments.new(comment_params)
 
     if @comment.save
       json_response @comment, :created
@@ -39,13 +29,22 @@ class CommentsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_comment
-      @comment = Comment.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def comment_params
-      params.permit(:message, :user_id, :recipe_id)
-    end
+  def has_access?
+    json_response({ error: 'Forbidden' }, 403) unless current_user == @comment.user || current_user.admin?
+  end
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_comment
+    @comment = @recipe.comments.find(params[:id])
+  end
+
+  def set_recipe
+    @recipe = Recipe.find(params[:recipe_id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def comment_params
+    params.permit(:message, :user_id, :recipe_id)
+  end
 end
