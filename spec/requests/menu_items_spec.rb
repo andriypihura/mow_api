@@ -1,19 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe "MenuItems", type: :request do
-  let!(:menu) { create(:menu) }
   let!(:recipe) { create(:recipe) }
-  let!(:menu_items) { create_list(:menu_item, 10) }
-  let(:menu_item) { menu_items.first }
-  let(:menu_item_id) { menu_item.id }
+  let!(:menu_item) { create(:menu_item) }
+  let!(:menu_item_id) { menu_item.id }
+  let!(:menu) { menu_item.menu }
+  let!(:user) { menu.user }
+  let!(:token) do
+    post '/authenticate', params: { email: user.email, password: '12345678' }
+    json['auth_token']
+  end
 
-  describe "GET /menu_items" do
-    before { get '/menu_items' }
+  describe "GET /users/:user_id/menus/:menu_id/menu_items" do
+    before { get "/users/#{user.id}/menus/#{menu.id}/menu_items", params: {}, headers: { 'Authorization' => token } }
 
     it 'returns menu_items' do
 
       expect(json).not_to be_empty
-      expect(json.size).to eq(10)
+      expect(json.size).to eq(1)
     end
 
     it 'returns status code 200' do
@@ -21,9 +25,9 @@ RSpec.describe "MenuItems", type: :request do
     end
   end
 
-  # Test suite for GET /menu_items/:id
-  describe 'GET /menu_items/:id' do
-    before { get "/menu_items/#{menu_item_id}" }
+  # Test suite for GET /users/:user_id/menus/:menu_id/menu_items/:id
+  describe 'GET /users/:user_id/menus/:menu_id/menu_items/:id' do
+    before { get "/users/#{user.id}/menus/#{menu.id}/menu_items/#{menu_item_id}", params: {}, headers: { 'Authorization' => token } }
 
     context 'when the record exists' do
       it 'returns the menu_item' do
@@ -51,13 +55,13 @@ RSpec.describe "MenuItems", type: :request do
     end
   end
 
-  # Test suite for POST /menu_items
-  describe 'POST /menu_items' do
+  # Test suite for POST /users/:user_id/menus/:menu_id/menu_items
+  describe 'POST /users/:user_id/menus/:menu_id/menu_items' do
     # valid payload
     let(:valid_attributes) { { primary_label: "Ttttttt sssss", menu_id: menu.id, recipe_id: recipe.id } }
 
     context 'when the request is valid' do
-      before { post '/menu_items', params: valid_attributes }
+      before { post "/users/#{user.id}/menus/#{menu.id}/menu_items", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a menu_item' do
         expect(json['primary_label']).to eq("Ttttttt sssss")
@@ -71,7 +75,7 @@ RSpec.describe "MenuItems", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/menu_items', params: { primary_label: "Ttttttt sssss" } }
+      before { post "/users/#{user.id}/menus/#{menu.id}/menu_items", params: { primary_label: "Ttttttt sssss" }, headers: { 'Authorization' => token } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -84,12 +88,12 @@ RSpec.describe "MenuItems", type: :request do
     end
   end
 
-  # Test suite for PUT /menu_items/:id
-  describe 'PUT /menu_items/:id' do
+  # Test suite for PUT /users/:user_id/menus/:menu_id/menu_items/:id
+  describe 'PUT /users/:user_id/menus/:menu_id/menu_items/:id' do
     let(:valid_attributes) { { primary_label: "updated primary_label" } }
 
     context 'when the record exists' do
-      before { put "/menu_items/#{menu_item_id}", params: valid_attributes }
+      before { put "/users/#{user.id}/menus/#{menu.id}/menu_items/#{menu_item_id}", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'updates the record' do
         expect(json['primary_label']).to eq("updated primary_label")
@@ -101,9 +105,9 @@ RSpec.describe "MenuItems", type: :request do
     end
   end
 
-  # Test suite for DELETE /menu_items/:id
-  describe 'DELETE /menu_items/:id' do
-    before { delete "/menu_items/#{menu_item_id}" }
+  # Test suite for DELETE /users/:user_id/menus/:menu_id/menu_items/:id
+  describe 'DELETE /users/:user_id/menus/:menu_id/menu_items/:id' do
+    before { delete "/users/#{user.id}/menus/#{menu.id}/menu_items/#{menu_item_id}", params: {}, headers: { 'Authorization' => token } }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

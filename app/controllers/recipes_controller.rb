@@ -2,6 +2,7 @@ class RecipesController < ApplicationController
   skip_before_action :authenticate_request, only: [:index, :show]
   before_action :set_recipe, only: [:show, :update, :destroy]
   before_action :set_user, only: [:create]
+  before_action :has_access?, only: [:update]
 
   # GET /recipes
   def index
@@ -15,7 +16,7 @@ class RecipesController < ApplicationController
     if @recipe.public? || current_user == @recipe.user
       json_response @recipe
     else
-      json_response({error: 'Not Authorized'}, 401)
+      json_response({ error: 'Forbidden' }, 403)
     end
   end
 
@@ -59,17 +60,17 @@ class RecipesController < ApplicationController
       end
       @recipe.destroy
     else
-      json_response({error: 'Not Authorized'}, 401)
+      json_response({ error: 'Forbidden' }, 403)
     end
   end
 
   private
 
-  def set_recipe
-    @recipe = Recipe.find(params[:id])
+  def has_access?
+    json_response({ error: 'Forbidden' }, 403) unless current_user == @recipe.user || current_user.admin?
   end
 
-  def set_user
+  def set_recipe
     @recipe = Recipe.find(params[:id])
   end
 

@@ -1,11 +1,15 @@
 Rails.application.routes.draw do
-
   post 'authenticate', to: 'authentication#authenticate'
 
-  resources :users, only: [:create, :show, :update, :destroy]
-  resources :recipes
-  resources :menu_items
-  resources :menus
-  resources :comments
-  resources :likes
+  resources :users, only: [:create, :show, :update, :destroy] do
+    resources :menus do
+      resources :menu_items
+    end
+  end
+
+  resources :recipes do
+    resources :comments, only: [:create, :update, :destroy]
+  end
+
+  resources :likes, only: [:create, :destroy]
 end

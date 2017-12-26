@@ -9,6 +9,7 @@ class User < ApplicationRecord
   validates :name, uniqueness: true
 
   def admin?
-    roles&.include? 'admin'
+    return false unless roles
+    roles.include? 'admin'
   end
 end

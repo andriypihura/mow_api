@@ -110,7 +110,7 @@ RSpec.describe "Users", type: :request do
       end
 
       it 'returns status code 204' do
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(403)
       end
     end
   end

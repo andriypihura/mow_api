@@ -1,19 +1,21 @@
 class MenusController < ApplicationController
   before_action :set_menu, only: [:show, :update, :destroy]
+  before_action :set_user
+  before_action :has_access?
 
-  # GET /menus
+  # GET /users/1/menus
   def index
     @menus = Menu.all
 
     json_response @menus
   end
 
-  # GET /menus/1
+  # GET /users/1/menus/1
   def show
     json_response @menu
   end
 
-  # POST /menus
+  # POST /users/1/menus
   def create
     @menu = Menu.new(menu_params)
 
@@ -24,7 +26,7 @@ class MenusController < ApplicationController
     end
   end
 
-  # PATCH/PUT /menus/1
+  # PATCH/PUT /users/1/menus/1
   def update
     if @menu.update(menu_params)
       json_response @menu
@@ -33,19 +35,27 @@ class MenusController < ApplicationController
     end
   end
 
-  # DELETE /menus/1
+  # DELETE /users/1/menus/1
   def destroy
     @menu.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_menu
-      @menu = Menu.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def menu_params
-      params.permit(:title, :user_id)
-    end
+  def has_access?
+    json_response({ error: 'Forbidden' }, 403) unless current_user == @user || current_user.admin?
+  end
+
+  def set_user
+    @user = User.find(params[:user_id])
+  end
+
+  def set_menu
+    @menu = Menu.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def menu_params
+    params.permit(:title, :user_id)
+  end
 end
