@@ -1,10 +1,6 @@
-require 'factory_girl'
-require 'faker'
-
 namespace :mow do
   desc 'Adds test data to the database'
   task data: :environment do
-    Dir[Rails.root.join('spec/factories/*.rb')].each { |f| require f }
     puts 'Create Sensei'.green
     User.create(
       name: 'Sensei',
