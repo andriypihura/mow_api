@@ -5,6 +5,8 @@ class Recipe < ApplicationRecord
 
   validates :title, presence: true
 
+  scope :for_all, -> { where(visibility: 'public') }
+
   def public?
     visibility == 'public'
   end
