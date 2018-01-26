@@ -13,6 +13,7 @@ gem 'pg'
 gem 'rubocop', '~> 0.52.1'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
+gem 'will_paginate'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -28,7 +29,7 @@ gem 'faker'
 # gem 'capistrano-rails', group: :development
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-# gem 'rack-cors'
+gem 'rack-cors'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5'

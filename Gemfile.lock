@@ -89,6 +89,7 @@ GEM
       slop (~> 3.4)
     puma (3.10.0)
     rack (2.0.3)
+    rack-cors (1.0.2)
     rack-test (0.7.0)
       rack (>= 1.0, < 3)
     rails (5.1.4)
@@ -169,6 +170,7 @@ GEM
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    will_paginate (3.1.5)
 
 PLATFORMS
   ruby
@@ -185,6 +187,7 @@ DEPENDENCIES
   pg
   pry
   puma (~> 3.7)
+  rack-cors
   rails (~> 5.1.4)
   rspec-rails (~> 3.5)
   rubocop (~> 0.52.1)
@@ -193,6 +196,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data
+  will_paginate
 
 BUNDLED WITH
    1.14.3
