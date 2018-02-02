@@ -1,0 +1,19 @@
+---
+development:
+  cloud_name: darkee
+  api_key: '614685796798546'
+  api_secret: DgiJyY4Cu8qyIUZW15vvEZvf0E8
+  enhance_image_tag: true
+  static_image_support: false
+production:
+  cloud_name: darkee
+  api_key: '614685796798546'
+  api_secret: DgiJyY4Cu8qyIUZW15vvEZvf0E8
+  enhance_image_tag: true
+  static_image_support: true
+test:
+  cloud_name: darkee
+  api_key: '614685796798546'
+  api_secret: DgiJyY4Cu8qyIUZW15vvEZvf0E8
+  enhance_image_tag: true
+  static_image_support: false

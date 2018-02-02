@@ -1,5 +1,5 @@
 class AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request
+  skip_before_action :authenticate_request, only: :authenticate
 
   def authenticate
     command = AuthenticateUser.call(params[:email], params[:password])
@@ -9,5 +9,9 @@ class AuthenticationController < ApplicationController
     else
       render json: { error: command.errors }, status: :unauthorized
     end
+  end
+
+  def already_authorized
+    render json: { smth: JsonWebToken.decode(headers['Authorization'].split(' ').last) }
   end
 end

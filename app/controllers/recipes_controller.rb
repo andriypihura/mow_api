@@ -3,6 +3,7 @@ class RecipesController < ApplicationController
   before_action :set_recipe, only: [:show, :update, :destroy]
   before_action :set_user, only: [:create]
   before_action :has_access?, only: [:update]
+  before_action :upload_image, only: [:create, :update]
 
   # GET /recipes
   def index
@@ -22,8 +23,8 @@ class RecipesController < ApplicationController
 
   # POST /recipes
   def create
-    @recipe = @user.recipes.new(recipe_params)
-
+    @recipe = @user.recipes.new(@recipe_params)
+    binding.pry
     if @recipe.save
       json_response @recipe, :created
     else
@@ -33,12 +34,8 @@ class RecipesController < ApplicationController
 
   # PATCH/PUT /recipes/1
   def update
-    if recipe_params[:visibility].present? && !current_user.admin?
-      params.delete :visibility
-    end
-
     if current_user == @recipe.user ||  current_user.admin?
-      if @recipe.update(recipe_params)
+      if @recipe.update(@recipe_params)
         json_response @recipe
       else
         json_response @recipe.errors, :unprocessable_entity
@@ -65,6 +62,12 @@ class RecipesController < ApplicationController
   end
 
   private
+
+  def upload_image
+    @recipe_params = recipe_params
+    @recipe_params.delete(:visibility) if @recipe_params[:visibility].present? && !current_user.admin?
+    @recipe_params[:image] = Cloudinary::Uploader.upload(recipe_params[:image])['url'] if recipe_params[:image]
+  end
 
   def has_access?
     json_response({ error: 'Forbidden' }, 403) unless current_user == @recipe.user || current_user.admin?
