@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   post 'authenticate', to: 'authentication#authenticate'
+  get 'checkauth', to: 'authentication#checkauth'
 
   resources :users, only: [:create, :show, :update, :destroy] do
     resources :menus do

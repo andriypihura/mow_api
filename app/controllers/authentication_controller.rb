@@ -1,5 +1,5 @@
 class AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request
+  skip_before_action :authenticate_request, except: %i[checkauth]
 
   def authenticate
     command = AuthenticateUser.call(params[:email], params[:password])
@@ -9,5 +9,9 @@ class AuthenticationController < ApplicationController
     else
       render json: { error: command.errors }, status: :unauthorized
     end
+  end
+
+  def checkauth
+    render json: { user: current_user }
   end
 end
