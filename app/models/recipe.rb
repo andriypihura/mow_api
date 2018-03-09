@@ -1,6 +1,6 @@
 class Recipe < ApplicationRecord
   belongs_to :user
-  has_many :comments
+  has_many :comments, -> { order('created_at DESC') }
   has_many :likes
 
   validates :title, presence: true

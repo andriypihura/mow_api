@@ -14,8 +14,7 @@ class RecipesController < ApplicationController
   # GET /recipes/1
   def show
     if @recipe.public? || current_user == @recipe.user
-      json_response(recipe: @recipe,
-                    comments: @recipe.comments)
+      json_response(recipe: Recipes::ShowSerializer.new(@recipe).as_json)
     else
       json_response({ error: 'Forbidden' }, 403)
     end
