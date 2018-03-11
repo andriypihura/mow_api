@@ -1,5 +1,6 @@
 class RecipesController < ApplicationController
   skip_before_action :authenticate_request, only: [:index, :show]
+  before_action :find_current_user, only: [:show]
   before_action :set_recipe, only: [:show, :update, :destroy]
   before_action :set_user, only: [:create]
   before_action :has_access?, only: [:update]
@@ -14,7 +15,7 @@ class RecipesController < ApplicationController
   # GET /recipes/1
   def show
     if @recipe.public? || current_user == @recipe.user
-      json_response(recipe: Recipes::ShowSerializer.new(@recipe).as_json)
+      json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
     else
       json_response({ error: 'Forbidden' }, 403)
     end

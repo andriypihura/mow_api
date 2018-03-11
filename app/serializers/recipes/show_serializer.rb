@@ -1,20 +1,27 @@
 module Recipes
   class ShowSerializer
 
-    def initialize(model)
+    def initialize(model, current_user)
       @model = model
+      @user = current_user
     end
 
     def as_json
       @model
-        .as_json(only: attributes)
-        .merge(comments: comments, include: incl_attributes)
+        .as_json(only: attributes,
+                 methods: mth_attributes,
+                 include: incl_attributes)
+        .merge(
+          comments: comments,
+          liked: @model.liked_by_user(@user),
+          user: !!@user
+        )
     end
 
     private
 
     def attributes
-      %i[id title image text ingredients
+      %i[id title image text ingredients calories
          categories complexity visibility time_consuming created_at]
     end
 
@@ -24,6 +31,14 @@ module Recipes
           only: %i[name avatar_url]
         }
       }
+    end
+
+    def mth_attributes
+      %i[likes_count]
+    end
+
+    def likes_count
+      134
     end
 
     def comments

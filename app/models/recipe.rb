@@ -10,4 +10,12 @@ class Recipe < ApplicationRecord
   def public?
     visibility == 'public'
   end
+
+  def likes_count
+    likes.active.count
+  end
+
+  def liked_by_user(user)
+    likes.active.where(user_id: user&.id).any?
+  end
 end
