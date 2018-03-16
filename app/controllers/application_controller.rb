@@ -13,6 +13,6 @@ class ApplicationController < ActionController::API
 
   def authenticate_request
     find_current_user
-    render json: { error: 'Not Authorized' }, status: 401 unless @current_user
+    render json: { error: 'Not Authorized' }, status: :unauthorized unless @current_user
   end
 end

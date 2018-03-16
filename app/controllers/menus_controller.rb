@@ -5,14 +5,17 @@ class MenusController < ApplicationController
 
   # GET /users/1/menus
   def index
-    @menus = Menu.all
-
-    json_response @menus
+    @menus = @user.menus
+    if @user == current_user || current_user.admin?
+      json_response(menus: Menus::IndexSerializer.new(@menus, current_user).as_json)
+    else
+      json_response({ error: 'Forbidden' }, 403)
+    end
   end
 
   # GET /users/1/menus/1
   def show
-    json_response @menu
+    json_response(menu: Menus::ShowSerializer.new(@menu).as_json)
   end
 
   # POST /users/1/menus

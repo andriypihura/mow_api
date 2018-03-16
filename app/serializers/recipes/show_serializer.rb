@@ -13,8 +13,7 @@ module Recipes
                  include: incl_attributes)
         .merge(
           comments: comments,
-          liked: @model.liked_by_user(@user),
-          user: !!@user
+          liked: @model.liked_by_user(@user)
         )
     end
 
@@ -35,10 +34,6 @@ module Recipes
 
     def mth_attributes
       %i[likes_count]
-    end
-
-    def likes_count
-      134
     end
 
     def comments
