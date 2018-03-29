@@ -6,6 +6,23 @@ class Recipe < ApplicationRecord
   validates :title, presence: true
 
   scope :for_all, -> { where(visibility: 'public') }
+  scope :filter_by, lambda { |params|
+    for_all
+      .by_title(params['title'])
+      .by_time_consuming(params['time_consuming_from'], params['time_consuming_to'])
+      .by_calories(params['calories_from'], params['calories_to'])
+      .by_complexity(params['complexity'])
+  }
+  scope :by_time_consuming, lambda { |start_range, end_range|
+    where("recipes.time_consuming <= ?", end_range)
+      .where("recipes.time_consuming >= ?", start_range) if start_range && end_range && start_range < end_range
+  }
+  scope :by_calories, lambda { |start_range, end_range|
+    where("recipes.calories <= ?", end_range)
+      .where("recipes.calories >= ?", start_range) if start_range && end_range && start_range < end_range
+  }
+  scope :by_complexity, ->(c) { where(complexity: c) if c }
+  scope :by_title, ->(t) { where('lower(recipes.title) ILIKE ?', "%#{t.downcase}%") if t }
 
   def public?
     visibility == 'public'

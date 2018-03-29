@@ -1,5 +1,5 @@
 class RecipesController < ApplicationController
-  skip_before_action :authenticate_request, only: [:index, :show]
+  skip_before_action :authenticate_request, only: [:index, :show, :filter]
   before_action :find_current_user, only: [:show]
   before_action :set_recipe, only: [:show, :update, :destroy]
   before_action :set_user, only: [:create]
@@ -7,7 +7,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes
   def index
-    @recipes = Recipe.all.paginate(page: params[:page], per_page: 12)
+    @recipes = Recipe.for_all.paginate(page: params[:page], per_page: 12)
 
     json_response(recipes: Recipes::PreviewSerializer.new(@recipes).as_json)
   end
@@ -65,6 +65,12 @@ class RecipesController < ApplicationController
     end
   end
 
+  # GET /recipes/filrer(:params)
+  def filter
+    recipes = Recipe.filter_by(filter_params).paginate(page: params[:page], per_page: 20)
+    json_response(recipes: Recipes::PreviewSerializer.new(recipes).as_json, pageCount: recipes.total_pages)
+  end
+
   private
 
   def has_access?
@@ -77,6 +83,15 @@ class RecipesController < ApplicationController
 
   def set_user
     @user = User.find(params[:user_id])
+  end
+
+  def filter_params
+    params.permit(:title,
+                  :time_consuming_from,
+                  :time_consuming_to,
+                  :calories_from,
+                  :calories_to,
+                  :complexity)
   end
 
   def recipe_params
