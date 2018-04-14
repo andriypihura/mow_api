@@ -10,6 +10,9 @@ Rails.application.routes.draw do
 
   resources :recipes do
     resources :comments, only: [:create, :update, :destroy]
+    collection do
+      post :filter
+    end
   end
 
   resources :likes, only: [:create, :destroy]
