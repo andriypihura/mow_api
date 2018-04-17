@@ -1,3 +1,5 @@
+require 'jwt'
+
 class AuthorizeApiRequest
   prepend SimpleCommand
   def initialize(headers = {})
