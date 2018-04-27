@@ -10,12 +10,11 @@ RSpec.describe "Recipes", type: :request do
   end
 
   describe "GET /recipes" do
-    before { get '/recipes' }
+    before { get '/recipes?page=1' }
 
     it 'returns recipes' do
-
       expect(json).not_to be_empty
-      expect(json.size).to eq(10)
+      expect(json['recipes'].size).to eq(10)
     end
 
     it 'returns status code 200' do
@@ -34,7 +33,7 @@ RSpec.describe "Recipes", type: :request do
 
       it 'returns the recipe' do
         expect(json).not_to be_empty
-        expect(json['id']).to eq(public_recipe.id)
+        expect(json['recipe']['id']).to eq(public_recipe.id)
       end
 
       it 'returns status code 200' do

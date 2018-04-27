@@ -7,6 +7,7 @@ FactoryGirl.define do
     calories { rand(30..1200) }
     complexity { %w[hard easy normal].sample }
     time_consuming { rand(10..300) }
+    visibility { 'public' }
 
     trait :public do
       visibility { 'public' }
