@@ -1,9 +1,8 @@
 module Menus
   class IndexSerializer
 
-    def initialize(models, current_user)
+    def initialize(models)
       @models = models
-      @user = current_user
     end
 
     def as_json

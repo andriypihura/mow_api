@@ -10,7 +10,7 @@ RSpec.describe "Comments", type: :request do
   end
 
   # Test suite for POST /recipes/#{recipe_id}/comments
-  describe 'POST recipes/#{recipe_id}/comments' do
+  describe 'POST recipes/:recipe_id/comments' do
     # valid payload
     let(:valid_attributes) { { message: "Test message", user_id: user.id } }
 
@@ -19,8 +19,7 @@ RSpec.describe "Comments", type: :request do
 
       it 'creates a comment' do
         expect(json['message']).to eq("Test message")
-        expect(json['user_id']).to eq(user.id)
-        expect(json['recipe_id']).to eq(recipe.id)
+        expect(json['user']['name']).to eq(user.name)
       end
 
       it 'returns status code 201' do
@@ -29,7 +28,7 @@ RSpec.describe "Comments", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post "/recipes/#{recipe.id}/comments", params: { message: "Test message" }, headers: { 'Authorization' => token } }
+      before { post "/recipes/#{recipe.id}/comments", params: {}, headers: { 'Authorization' => token } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -37,7 +36,7 @@ RSpec.describe "Comments", type: :request do
 
       it 'returns a validation failure message' do
         expect(response.body)
-          .to match(/must exist/)
+          .to match(/can't be blank/)
       end
     end
   end

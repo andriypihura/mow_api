@@ -7,7 +7,7 @@ class MenusController < ApplicationController
   def index
     @menus = @user.menus
     if @user == current_user || current_user.admin?
-      json_response(menus: Menus::IndexSerializer.new(@menus, current_user).as_json)
+      json_response(menus: Menus::IndexSerializer.new(@menus).as_json)
     else
       json_response({ error: 'Forbidden' }, 403)
     end
