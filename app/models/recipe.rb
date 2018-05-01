@@ -39,6 +39,10 @@ class Recipe < ApplicationRecord
     visibility == 'public'
   end
 
+  def for_self?
+    visibility == 'for_self'
+  end
+
   def likes_count
     likes.active.count
   end

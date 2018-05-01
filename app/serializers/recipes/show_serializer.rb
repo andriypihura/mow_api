@@ -27,7 +27,7 @@ module Recipes
     def incl_attributes
       {
         user: {
-          only: %i[name avatar_url]
+          only: %i[id name avatar_url]
         }
       }
     end

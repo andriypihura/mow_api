@@ -54,15 +54,18 @@ class RecipesController < ApplicationController
 
   # DELETE /recipes/1
   def destroy
-    if current_user.admin?
+    if current_user.admin? || @recipe.for_self? && current_user == @recipe.user
       MenuItem.where(recipe_id: @recipe.id).each do |menu_item|
-        recipe = Recipe.new(@recipe)
+        recipe_attributes = @recipe.attributes
+        recipe_attributes.delete('id')
+        recipe = Recipe.new(recipe_attributes)
         recipe.user = menu_item.menu.user
         recipe.visibility = 'for_self'
         recipe.save
         menu_item.update(recipe_id: recipe.id)
       end
       @recipe.destroy
+      json_response :ok
     else
       json_response({ error: 'Forbidden' }, 403)
     end
@@ -78,7 +81,7 @@ class RecipesController < ApplicationController
 
   def upload_image
     @recipe_params = recipe_params
-    @recipe_params.delete(:visibility) if @recipe_params[:visibility].present? && !current_user.admin?
+    @recipe_params.delete('visibility') if @recipe_params[:visibility].present? && !current_user.admin?
     @recipe_params[:image] = Cloudinary::Uploader.upload(recipe_params[:image])['url'] if recipe_params[:image]
   end
 
