@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Recipes", type: :request do
-  include ActionDispatch::TestProcess::FixtureFile
   let!(:user) { create(:user) }
   let!(:recipes) { create_list(:recipe, 10) }
   let(:recipe_id) { recipes.first.id }
@@ -62,11 +61,18 @@ RSpec.describe "Recipes", type: :request do
   # Test suite for POST /recipes
   describe 'POST /recipes' do
     context 'when the request is valid' do
-      let!(:valid_attributes) { { title: 'Learn Elm', image: fixture_file_upload('pizza_test.jpg'), user_id: user.id } }
+      let!(:valid_attributes) do
+        {
+          title: 'Learn Elm',
+          user_id: user.id,
+          ingredients: 'la,la,la',
+          text: '322'
+        }
+      end
       before { post '/recipes', params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a recipe' do
-        expect(json['title']).to eq('Learn Elm')
+        expect(json['recipe']['title']).to eq('Learn Elm')
       end
 
       it 'returns status code 201' do
@@ -100,7 +106,7 @@ RSpec.describe "Recipes", type: :request do
       end
 
       it 'updates the record' do
-        expect(json['title']).to eq('Shopping')
+        expect(json['recipe']['title']).to eq('Shopping')
       end
 
       it 'returns status code 200' do
@@ -119,8 +125,8 @@ RSpec.describe "Recipes", type: :request do
       delete "/recipes/#{recipe_id}", params: {}, headers: { 'Authorization' => admin_token }
     end
 
-    it 'returns status code 204' do
-      expect(response).to have_http_status(204)
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
     end
   end
 end

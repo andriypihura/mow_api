@@ -18,7 +18,7 @@ RSpec.describe "Users", type: :request do
     context 'when the record exists' do
       it 'returns the user' do
         expect(json).not_to be_empty
-        expect(json['id']).to eq(user_id)
+        expect(json['user']['id']).to eq(user_id)
       end
 
       it 'returns status code 200' do
@@ -47,7 +47,7 @@ RSpec.describe "Users", type: :request do
       before { post '/users', params: valid_attributes }
 
       it 'creates a user' do
-        expect(json['name']).to eq('Test User name')
+        expect(json['user']['name']).to eq('Test User name')
       end
 
       it 'returns status code 201' do
@@ -77,7 +77,7 @@ RSpec.describe "Users", type: :request do
       before { put "/users/#{user_id}", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'updates the record' do
-        expect(json['name']).to eq('New User name')
+        expect(json['user']['name']).to eq('New User name')
       end
 
       it 'returns status code 200' do
@@ -109,7 +109,7 @@ RSpec.describe "Users", type: :request do
         delete "/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
       end
 
-      it 'returns status code 204' do
+      it 'returns status code 403' do
         expect(response).to have_http_status(403)
       end
     end

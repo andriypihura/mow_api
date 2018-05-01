@@ -23,7 +23,7 @@ class MenusController < ApplicationController
     @menu = Menu.new(menu_params)
 
     if @menu.save
-      json_response(menu: Menus::ShowSerializer.new(@menu).as_json)
+      json_response({ menu: Menus::ShowSerializer.new(@menu).as_json }, :created)
     else
       json_response @menu.errors, :unprocessable_entity
     end

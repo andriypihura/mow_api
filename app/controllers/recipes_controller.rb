@@ -33,7 +33,7 @@ class RecipesController < ApplicationController
   def create
     @recipe = @user.recipes.new(@recipe_params)
     if @recipe.save
-      json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
+      json_response({ recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json }, :created)
     else
       json_response @recipe.errors, :unprocessable_entity
     end
