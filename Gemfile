@@ -31,6 +31,9 @@ gem 'faker'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
+# for the ability to upload images
+gem 'cloudinary'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.7'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -39,6 +42,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'simplecov', require: false
   gem 'shoulda-matchers', '~> 3.1'
   gem 'database_cleaner'
 end

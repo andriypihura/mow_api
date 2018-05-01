@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Recipes", type: :request do
+  include ActionDispatch::TestProcess::FixtureFile
   let!(:user) { create(:user) }
   let!(:recipes) { create_list(:recipe, 10) }
   let(:recipe_id) { recipes.first.id }
@@ -60,10 +61,8 @@ RSpec.describe "Recipes", type: :request do
 
   # Test suite for POST /recipes
   describe 'POST /recipes' do
-    # valid payload
-    let(:valid_attributes) { { title: 'Learn Elm', user_id: user.id } }
-
     context 'when the request is valid' do
+      let!(:valid_attributes) { { title: 'Learn Elm', image: fixture_file_upload('pizza_test.jpg'), user_id: user.id } }
       before { post '/recipes', params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a recipe' do

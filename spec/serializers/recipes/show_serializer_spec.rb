@@ -17,7 +17,7 @@ RSpec.describe 'Recipes::ShowSerializer' do
   let(:incl_attributes_to_serialize) do
     {
       user: {
-        only: %i[name avatar_url]
+        only: %i[id name avatar_url]
       }
     }
   end
