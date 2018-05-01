@@ -12,6 +12,13 @@ class RecipesController < ApplicationController
     json_response(recipes: Recipes::PreviewSerializer.new(@recipes).as_json)
   end
 
+  # GET /recipes/overview
+  def overview
+    @recipes = Recipe.by_type(params[:type], current_user&.id).paginate(page: params[:page], per_page: 20)
+
+    json_response(recipes: Recipes::PreviewSerializer.new(@recipes).as_json)
+  end
+
   # GET /recipes/1
   def show
     if @recipe.public? || current_user == @recipe.user
@@ -26,7 +33,7 @@ class RecipesController < ApplicationController
     @recipe = @user.recipes.new(recipe_params)
 
     if @recipe.save
-      json_response @recipe, :created
+      json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
     else
       json_response @recipe.errors, :unprocessable_entity
     end
@@ -38,9 +45,9 @@ class RecipesController < ApplicationController
       params.delete :visibility
     end
 
-    if current_user == @recipe.user ||  current_user.admin?
+    if current_user == @recipe.user || current_user.admin?
       if @recipe.update(recipe_params)
-        json_response @recipe
+        json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
       else
         json_response @recipe.errors, :unprocessable_entity
       end

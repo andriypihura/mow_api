@@ -12,7 +12,7 @@ module Recipes
     private
 
     def attributes
-      %i[id title image calories categories complexity time_consuming]
+      %i[id title image calories categories complexity time_consuming ingredients]
     end
   end
 end

@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :recipes do
     resources :comments, only: [:create, :update, :destroy]
     collection do
+      get :overview
       post :filter
     end
   end

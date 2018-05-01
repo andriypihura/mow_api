@@ -23,7 +23,7 @@ module Menus
           only: %i[id primary_label secondary_label created_at],
           include: {
             recipe: {
-              only: %i[id title image calories categories complexity time_consuming]
+              only: %i[id title image calories categories complexity time_consuming ingredients]
             }
           }
         }

@@ -6,7 +6,7 @@ RSpec.describe 'Recipes::PreviewSerializer' do
   let(:subject) { Recipes::PreviewSerializer.new(recipes) }
 
   let(:attributes_to_serialize) do
-    %i[id title image calories categories complexity time_consuming]
+    %i[id title image calories categories complexity time_consuming ingredients]
   end
 
   describe '#as_json' do

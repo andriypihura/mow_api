@@ -23,7 +23,7 @@ class MenusController < ApplicationController
     @menu = Menu.new(menu_params)
 
     if @menu.save
-      json_response @menu, :created
+      json_response(menu: Menus::ShowSerializer.new(@menu).as_json)
     else
       json_response @menu.errors, :unprocessable_entity
     end
@@ -32,7 +32,7 @@ class MenusController < ApplicationController
   # PATCH/PUT /users/1/menus/1
   def update
     if @menu.update(menu_params)
-      json_response @menu
+      json_response(menu: Menus::ShowSerializer.new(@menu).as_json)
     else
       json_response @menu.errors, :unprocessable_entity
     end
@@ -41,6 +41,7 @@ class MenusController < ApplicationController
   # DELETE /users/1/menus/1
   def destroy
     @menu.destroy
+    json_response :ok
   end
 
   private

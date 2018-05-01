@@ -4,8 +4,19 @@ class Recipe < ApplicationRecord
   has_many :likes
 
   validates :title, presence: true
+  validates :ingredients, presence: true
+  validates :text, presence: true
 
   scope :for_all, -> { where(visibility: 'public') }
+  scope :by_type, lambda { |type, user_id|
+    if type == 'my'
+      where(user_id: user_id)
+    elsif type == 'likes'
+      joins(:likes).where(likes: { user_id: user_id, value: true })
+    else
+      where(nil)
+    end
+  }
   scope :filter_by, lambda { |params|
     for_all
       .by_title(params['title'])
