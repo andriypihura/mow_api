@@ -109,8 +109,8 @@ RSpec.describe "MenuItems", type: :request do
   describe 'DELETE /users/:user_id/menus/:menu_id/menu_items/:id' do
     before { delete "/users/#{user.id}/menus/#{menu.id}/menu_items/#{menu_item_id}", params: {}, headers: { 'Authorization' => token } }
 
-    it 'returns status code 204' do
-      expect(response).to have_http_status(204)
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
     end
   end
 end

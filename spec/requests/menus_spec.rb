@@ -60,8 +60,7 @@ RSpec.describe "Menus", type: :request do
       before { post "/users/#{user.id}/menus", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a menu' do
-        expect(json['title']).to eq("Ttttttt sssss")
-        expect(json['user_id']).to eq(user.id)
+        expect(json['menu']['title']).to eq("Ttttttt sssss")
       end
 
       it 'returns status code 201' do
@@ -91,7 +90,7 @@ RSpec.describe "Menus", type: :request do
       before { put "/users/#{user.id}/menus/#{menu_id}", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'updates the record' do
-        expect(json['title']).to eq("updated title")
+        expect(json['menu']['title']).to eq("updated title")
       end
 
       it 'returns status code 200' do
@@ -104,8 +103,8 @@ RSpec.describe "Menus", type: :request do
   describe 'DELETE /users/:user_id/menus/:id' do
     before { delete "/users/#{user.id}/menus/#{menu_id}", params: {}, headers: { 'Authorization' => token } }
 
-    it 'returns status code 204' do
-      expect(response).to have_http_status(204)
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
     end
   end
 end
