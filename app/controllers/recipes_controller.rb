@@ -32,7 +32,6 @@ class RecipesController < ApplicationController
   # POST /recipes
   def create
     @recipe = @user.recipes.new(@recipe_params)
-    binding.pry
     if @recipe.save
       json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
     else
