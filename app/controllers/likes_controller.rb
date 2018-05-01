@@ -3,13 +3,9 @@ class LikesController < ApplicationController
 
   # POST /likes
   def create
-    @like = find_by_user_and_recipe_ids(params[:user_id], params[:recipe_id])
+    @like = find_by_user_and_recipe_ids(current_user.id, params[:recipe_id])
 
-    if @like.present? && current_user == @like.user
-      update_like
-    else
-      create_like
-    end
+    @like.present? ? update_like : create_like
   end
 
   # DELETE /likes/1
@@ -21,6 +17,7 @@ class LikesController < ApplicationController
 
   def create_like
     @like = Like.new(like_params)
+    @like.user = current_user
 
     if @like.save
       json_response @like, :created
@@ -48,6 +45,6 @@ class LikesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def like_params
-    params.permit(:value, :user_id, :recipe_id)
+    params.permit(:value, :recipe_id)
   end
 end

@@ -30,8 +30,7 @@ RSpec.describe "Menus", type: :request do
     context 'when the record exists' do
       it 'returns the menu' do
         expect(json).not_to be_empty
-        expect(json['id']).to eq(menu_id)
-        expect(json['user_id']).to eq(menu.user.id)
+        expect(json['menu']['id']).to eq(menu_id)
       end
 
       it 'returns status code 200' do

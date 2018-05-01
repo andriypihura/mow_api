@@ -46,14 +46,14 @@ namespace :mow do
     end
 
     puts 'Create several menu items for Wangsan'.green
-    15.times do
+    50.times do
       FactoryGirl.create(
         :menu_item,
         menu: user.menus.first,
         recipe: Recipe.offset(rand(Recipe.count)).first
       )
     end
-    15.times do
+    50.times do
       FactoryGirl.create(
         :menu_item,
         menu: user.menus.last,

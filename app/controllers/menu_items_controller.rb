@@ -39,6 +39,7 @@ class MenuItemsController < ApplicationController
   # DELETE users/1/menus/1/menu_items/1
   def destroy
     @menu_item.destroy
+    json_response :ok
   end
 
   private

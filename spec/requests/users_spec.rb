@@ -12,7 +12,7 @@ RSpec.describe "Users", type: :request do
   # Test suite for GET /users/:id
   describe 'GET /users/:id' do
     before do
-      get "/users/#{user_id}"
+      get "/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
     end
 
     context 'when the record exists' do

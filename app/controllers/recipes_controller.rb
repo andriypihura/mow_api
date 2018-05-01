@@ -1,5 +1,6 @@
 class RecipesController < ApplicationController
-  skip_before_action :authenticate_request, only: [:index, :show]
+  skip_before_action :authenticate_request, only: [:index, :show, :filter]
+  before_action :find_current_user, only: [:show]
   before_action :set_recipe, only: [:show, :update, :destroy]
   before_action :set_user, only: [:create]
   before_action :has_access?, only: [:update]
@@ -7,15 +8,22 @@ class RecipesController < ApplicationController
 
   # GET /recipes
   def index
-    @recipes = Recipe.all.paginate(page: params[:page], per_page: 12)
+    @recipes = Recipe.for_all.paginate(page: params[:page], per_page: 12)
 
-    json_response @recipes
+    json_response(recipes: Recipes::PreviewSerializer.new(@recipes).as_json)
+  end
+
+  # GET /recipes/overview
+  def overview
+    @recipes = Recipe.by_type(params[:type], current_user&.id).paginate(page: params[:page], per_page: 20)
+
+    json_response(recipes: Recipes::PreviewSerializer.new(@recipes).as_json)
   end
 
   # GET /recipes/1
   def show
     if @recipe.public? || current_user == @recipe.user
-      json_response @recipe
+      json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
     else
       json_response({ error: 'Forbidden' }, 403)
     end
@@ -26,7 +34,7 @@ class RecipesController < ApplicationController
     @recipe = @user.recipes.new(@recipe_params)
     binding.pry
     if @recipe.save
-      json_response @recipe, :created
+      json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
     else
       json_response @recipe.errors, :unprocessable_entity
     end
@@ -34,9 +42,9 @@ class RecipesController < ApplicationController
 
   # PATCH/PUT /recipes/1
   def update
-    if current_user == @recipe.user ||  current_user.admin?
+    if current_user == @recipe.user || current_user.admin?
       if @recipe.update(@recipe_params)
-        json_response @recipe
+        json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
       else
         json_response @recipe.errors, :unprocessable_entity
       end
@@ -61,6 +69,12 @@ class RecipesController < ApplicationController
     end
   end
 
+  # GET /recipes/filrer(:params)
+  def filter
+    recipes = Recipe.filter_by(filter_params).paginate(page: params[:page], per_page: 20)
+    json_response(recipes: Recipes::PreviewSerializer.new(recipes).as_json, pageCount: recipes.total_pages)
+  end
+
   private
 
   def upload_image
@@ -79,6 +93,15 @@ class RecipesController < ApplicationController
 
   def set_user
     @user = User.find(params[:user_id])
+  end
+
+  def filter_params
+    params.permit(:title,
+                  :time_consuming_from,
+                  :time_consuming_to,
+                  :calories_from,
+                  :calories_to,
+                  :complexity)
   end
 
   def recipe_params

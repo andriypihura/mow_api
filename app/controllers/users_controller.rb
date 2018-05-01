@@ -1,11 +1,15 @@
 class UsersController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create, :show]
+  skip_before_action :authenticate_request, only: [:create]
   before_action :set_user, only: [:show, :update, :destroy]
   before_action :has_access?, only: [:update, :destroy]
 
   # GET /users/1
   def show
-    json_response @user
+    if current_user.id == params[:id].to_i
+      json_response @user
+    else
+      json_response({ error: 'Forbidden' }, 403)
+    end
   end
 
   # POST /users

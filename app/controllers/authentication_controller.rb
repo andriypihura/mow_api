@@ -1,5 +1,5 @@
 class AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request, only: :authenticate
+  skip_before_action :authenticate_request, except: %i[checkauth]
 
   def authenticate
     command = AuthenticateUser.call(params[:email], params[:password])
@@ -11,7 +11,7 @@ class AuthenticationController < ApplicationController
     end
   end
 
-  def already_authorized
-    render json: { smth: JsonWebToken.decode(headers['Authorization'].split(' ').last) }
+  def checkauth
+    render json: { user: current_user }
   end
 end

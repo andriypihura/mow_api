@@ -13,6 +13,7 @@ FactoryGirl.define do
              'http://res.cloudinary.com/darkee/image/upload/v1517575480/chicken_ltkejr.jpg',
              'http://res.cloudinary.com/darkee/image/upload/v1517574705/efoylvocrbda3c4gslf9.jpg',
              nil, nil, nil, nil, nil].sample }
+    visibility { 'public' }
 
     trait :public do
       visibility { 'public' }

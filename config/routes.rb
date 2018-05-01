@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   post 'authenticate', to: 'authentication#authenticate'
-  post 'protected', to: 'authentication#already_authorized'
+  get 'checkauth', to: 'authentication#checkauth'
 
   resources :users, only: [:create, :show, :update, :destroy] do
     resources :menus do
@@ -10,6 +10,10 @@ Rails.application.routes.draw do
 
   resources :recipes do
     resources :comments, only: [:create, :update, :destroy]
+    collection do
+      get :overview
+      post :filter
+    end
   end
 
   resources :likes, only: [:create, :destroy]
