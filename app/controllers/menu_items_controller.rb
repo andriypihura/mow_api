@@ -13,7 +13,7 @@ class MenuItemsController < ApplicationController
 
   # GET users/1/menus/1/menu_items/1
   def show
-    json_response @menu_item
+    json_response(menu_item: MenuItemSerializer.new(@menu_item).as_json)
   end
 
   # POST users/1/menus/1/menu_items
@@ -21,7 +21,7 @@ class MenuItemsController < ApplicationController
     @menu_item = @menu.menu_items.new(menu_item_params)
 
     if @menu_item.save
-      json_response @menu_item, :created
+      json_response({menu_item: MenuItemSerializer.new(@menu_item).as_json}, :created)
     else
       json_response @menu_item.errors, :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class MenuItemsController < ApplicationController
   # PATCH/PUT users/1/menus/1/menu_items/1
   def update
     if @menu_item.update(menu_item_params)
-      json_response @menu_item
+      json_response(MenuItemSerializer.new(@menu_item).as_json)
     else
       json_response @menu_item.errors, :unprocessable_entity
     end

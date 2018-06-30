@@ -7,8 +7,10 @@ module Menus
 
     def as_json
       @model
-        .as_json(only: attributes,
-                 include: incl_attributes)
+        .as_json(only: attributes)
+        .merge(
+          menu_items: menu_items
+        )
     end
 
     private
@@ -17,17 +19,8 @@ module Menus
       %i[id title created_at updated_at color]
     end
 
-    def incl_attributes
-      {
-        menu_items: {
-          only: %i[id primary_label secondary_label created_at],
-          include: {
-            recipe: {
-              only: %i[id title image calories categories complexity time_consuming ingredients]
-            }
-          }
-        }
-      }
+    def menu_items
+      @model.menu_items.map { |menu_item| MenuItemSerializer.new(menu_item).as_json }
     end
   end
 end
