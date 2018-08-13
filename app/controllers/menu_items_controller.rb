@@ -1,8 +1,8 @@
 class MenuItemsController < ApplicationController
   before_action :set_user
   before_action :set_menu
-  before_action :set_menu_item, only: [:show, :update, :destroy]
-  before_action :has_access?
+  before_action :set_menu_item, only: %i[show update destroy]
+  before_action :can?
 
   # GET users/1/menus/1/menu_items
   def index
@@ -21,7 +21,10 @@ class MenuItemsController < ApplicationController
     @menu_item = @menu.menu_items.new(menu_item_params)
 
     if @menu_item.save
-      json_response({menu_item: MenuItemSerializer.new(@menu_item).as_json}, :created)
+      json_response(
+        { menu_item: MenuItemSerializer.new(@menu_item).as_json },
+        :created
+      )
     else
       json_response @menu_item.errors, :unprocessable_entity
     end
@@ -43,8 +46,10 @@ class MenuItemsController < ApplicationController
   end
 
   private
-  def has_access?
-    json_response({ error: 'Forbidden' }, 403) unless current_user == @user || current_user.admin?
+
+  def can?
+    return if current_user != @user || !current_user.admin?
+    json_response({ error: 'Forbidden' }, 403)
   end
 
   def set_user
