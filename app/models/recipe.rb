@@ -7,7 +7,7 @@ class Recipe < ApplicationRecord
   validates :ingredients, presence: true
   validates :text, presence: true
 
-  scope :for_all, -> { where(visibility: 'public') }
+  scope :visible, -> { where(visibility: 'public') }
   scope :by_type, lambda { |type, user_id|
     if type == 'my'
       where(user_id: user_id)
@@ -18,7 +18,7 @@ class Recipe < ApplicationRecord
     end
   }
   scope :filter_by, lambda { |params|
-    for_all
+    visible
       .by_title(params['title'])
       .by_time_consuming(params['time_consuming_from'], params['time_consuming_to'])
       .by_calories(params['calories_from'], params['calories_to'])

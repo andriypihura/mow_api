@@ -8,14 +8,16 @@ class RecipesController < ApplicationController
 
   # GET /recipes
   def index
-    @recipes = Recipe.for_all.paginate(page: params[:page], per_page: 12)
+    @recipes = Recipe.visible
+                     .paginate(page: params[:page], per_page: 12)
 
     json_response(recipes: Recipes::PreviewSerializer.new(@recipes).as_json)
   end
 
   # GET /recipes/overview
   def overview
-    @recipes = Recipe.by_type(params[:type], current_user&.id).paginate(page: params[:page], per_page: 20)
+    @recipes = Recipe.by_type(params[:type], current_user&.id)
+                     .paginate(page: params[:page], per_page: 20)
 
     json_response(recipes: Recipes::PreviewSerializer.new(@recipes).as_json)
   end
@@ -23,7 +25,9 @@ class RecipesController < ApplicationController
   # GET /recipes/1
   def show
     if @recipe.public? || current_user == @recipe.user
-      json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
+      json_response(
+        recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json
+      )
     else
       json_response({ error: 'Forbidden' }, 403)
     end
@@ -33,7 +37,10 @@ class RecipesController < ApplicationController
   def create
     @recipe = @user.recipes.new(@recipe_params)
     if @recipe.save
-      json_response({ recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json }, :created)
+      json_response(
+        { recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json },
+        :created
+      )
     else
       json_response @recipe.errors, :unprocessable_entity
     end
@@ -43,7 +50,9 @@ class RecipesController < ApplicationController
   def update
     if current_user == @recipe.user || current_user.admin?
       if @recipe.update(@recipe_params)
-        json_response(recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json)
+        json_response(
+          recipe: Recipes::ShowSerializer.new(@recipe, current_user).as_json
+        )
       else
         json_response @recipe.errors, :unprocessable_entity
       end
@@ -73,15 +82,18 @@ class RecipesController < ApplicationController
 
   # GET /recipes/filrer(:params)
   def filter
-    recipes = Recipe.filter_by(filter_params).paginate(page: params[:page], per_page: 20)
-    json_response(recipes: Recipes::PreviewSerializer.new(recipes).as_json, pageCount: recipes.total_pages)
+    recipes = Recipe.filter_by(filter_params)
+                    .paginate(page: params[:page], per_page: 20)
+    json_response(
+      recipes: Recipes::PreviewSerializer.new(recipes).as_json,
+      pageCount: recipes.total_pages
+    )
   end
 
   private
 
   def upload_image
     @recipe_params = recipe_params
-    @recipe_params.delete('visibility') if @recipe_params[:visibility].present? && !current_user.admin?
     @recipe_params[:image] = Cloudinary::Uploader.upload(recipe_params[:image])['url'] if recipe_params[:image]
   end
 
