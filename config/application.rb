@@ -15,6 +15,10 @@ require "action_cable/engine"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+if Rails.env.production?
+    Rails.logger.extend(ActiveSupport::Logger.broadcast(Logster.logger))
+end
+
 Logster.set_environments([:development, :staging, :production])
 
 module MenuOnWebApi
