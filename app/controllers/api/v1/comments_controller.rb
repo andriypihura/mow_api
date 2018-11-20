@@ -1,4 +1,4 @@
-class CommentsController < ApplicationController
+class Api::V1::CommentsController < ApplicationController
   before_action :set_comment, only: [:update, :destroy]
   before_action :has_access?, only: [:update, :destroy]
 

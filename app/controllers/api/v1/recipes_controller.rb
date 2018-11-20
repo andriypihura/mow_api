@@ -1,4 +1,4 @@
-class RecipesController < ApplicationController
+class Api::V1::RecipesController < ApplicationController
   skip_before_action :authenticate_request, only: [:index, :show, :filter]
   before_action :find_current_user, only: [:show]
   before_action :set_recipe, only: [:show, :update, :destroy]
