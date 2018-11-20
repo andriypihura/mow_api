@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Logster::Web => '/logs'
+
   post 'authenticate', to: 'authentication#authenticate'
   get 'checkauth', to: 'authentication#checkauth'
 
