@@ -3,7 +3,7 @@
 * Ruby version '2.4.2'
 * create pg user and add credentials into database.yml
 * rails db:setup
-* rails mow:data # for generationg test data
+* rails mow:data # for generating test data
 
 # Info
 * Test coverage - 95.8%
