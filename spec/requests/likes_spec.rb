@@ -6,7 +6,7 @@ RSpec.describe "Likes", type: :request do
   let!(:like) { create(:like) }
   let(:like_id) { like.id }
   let!(:token) do
-    post '/authenticate', params: { email: user.email, password: '12345678' }
+    post '/api/v1/authenticate', params: { email: user.email, password: '12345678' }
     json['auth_token']
   end
 
@@ -16,7 +16,7 @@ RSpec.describe "Likes", type: :request do
     let(:valid_attributes) { { value: true, user_id: user.id, recipe_id: recipe.id } }
 
     context 'when the request is valid' do
-      before { post '/likes', params: valid_attributes, headers: { 'Authorization' => token } }
+      before { post '/api/v1/likes', params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a like' do
         expect(json['value']).to eq(true)
@@ -31,11 +31,11 @@ RSpec.describe "Likes", type: :request do
 
     context 'when the like already exist' do
       let!(:like_owner_token) do
-        post '/authenticate', params: { email: like.user.email, password: '12345678' }
+        post '/api/v1/authenticate', params: { email: like.user.email, password: '12345678' }
         json['auth_token']
       end
 
-      before { post '/likes', params: { value: true, user_id: like.user.id, recipe_id: like.recipe.id }, headers: { 'Authorization' => like_owner_token } }
+      before { post '/api/v1/likes', params: { value: true, user_id: like.user.id, recipe_id: like.recipe.id }, headers: { 'Authorization' => like_owner_token } }
 
       it 'change the like' do
         expect(json['value']).to eq(false)
@@ -45,7 +45,7 @@ RSpec.describe "Likes", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/likes', params: { value: true }, headers: { 'Authorization' => token } }
+      before { post '/api/v1/likes', params: { value: true }, headers: { 'Authorization' => token } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -60,7 +60,7 @@ RSpec.describe "Likes", type: :request do
 
   # Test suite for DELETE /likes/:id
   describe 'DELETE /likes/:id' do
-    before { delete "/likes/#{like_id}", headers: { 'Authorization' => token } }
+    before { delete "/api/v1/likes/#{like_id}", headers: { 'Authorization' => token } }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

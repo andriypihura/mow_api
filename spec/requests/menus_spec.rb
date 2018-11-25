@@ -5,12 +5,12 @@ RSpec.describe "Menus", type: :request do
   let!(:user) { menu.user }
   let(:menu_id) { menu.id }
   let!(:token) do
-    post '/authenticate', params: { email: user.email, password: '12345678' }
+    post '/api/v1/authenticate', params: { email: user.email, password: '12345678' }
     json['auth_token']
   end
 
   describe 'GET /users/:user_id/menus' do
-    before { get "/users/#{user.id}/menus", params: {}, headers: { 'Authorization' => token } }
+    before { get "/api/v1/users/#{user.id}/menus", params: {}, headers: { 'Authorization' => token } }
 
     it 'returns menus' do
 
@@ -25,7 +25,7 @@ RSpec.describe "Menus", type: :request do
 
   # Test suite for GET /users/:user_id/menus/:id
   describe 'GET /users/:user_id/menus/:id' do
-    before { get "/users/#{user.id}/menus/#{menu_id}", params: {}, headers: { 'Authorization' => token } }
+    before { get "/api/v1/users/#{user.id}/menus/#{menu_id}", params: {}, headers: { 'Authorization' => token } }
 
     context 'when the record exists' do
       it 'returns the menu' do
@@ -57,7 +57,7 @@ RSpec.describe "Menus", type: :request do
     let(:valid_attributes) { { title: "Ttttttt sssss" } }
 
     context 'when the request is valid' do
-      before { post "/users/#{user.id}/menus", params: valid_attributes, headers: { 'Authorization' => token } }
+      before { post "/api/v1/users/#{user.id}/menus", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a menu' do
         expect(json['menu']['title']).to eq("Ttttttt sssss")
@@ -69,7 +69,7 @@ RSpec.describe "Menus", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post "/users/#{user.id}/menus", params: {}, headers: { 'Authorization' => token } }
+      before { post "/api/v1/users/#{user.id}/menus", params: {}, headers: { 'Authorization' => token } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -87,7 +87,7 @@ RSpec.describe "Menus", type: :request do
     let(:valid_attributes) { { title: "updated title" } }
 
     context 'when the record exists' do
-      before { put "/users/#{user.id}/menus/#{menu_id}", params: valid_attributes, headers: { 'Authorization' => token } }
+      before { put "/api/v1/users/#{user.id}/menus/#{menu_id}", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'updates the record' do
         expect(json['menu']['title']).to eq("updated title")
@@ -101,7 +101,7 @@ RSpec.describe "Menus", type: :request do
 
   # Test suite for DELETE /users/:user_id/menus/:id
   describe 'DELETE /users/:user_id/menus/:id' do
-    before { delete "/users/#{user.id}/menus/#{menu_id}", params: {}, headers: { 'Authorization' => token } }
+    before { delete "/api/v1/users/#{user.id}/menus/#{menu_id}", params: {}, headers: { 'Authorization' => token } }
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)

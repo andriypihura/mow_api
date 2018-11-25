@@ -5,14 +5,14 @@ RSpec.describe "Users", type: :request do
   let!(:user) { create(:user) }
   let!(:user_id) { user.id }
   let!(:token) do
-    post '/authenticate', params: { email: user.email, password: '12345678' }
+    post '/api/v1/authenticate', params: { email: user.email, password: '12345678' }
     json['auth_token']
   end
 
   # Test suite for GET /users/:id
   describe 'GET /users/:id' do
     before do
-      get "/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
+      get "/api/v1/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
     end
 
     context 'when the record exists' do
@@ -44,7 +44,7 @@ RSpec.describe "Users", type: :request do
     let(:valid_attributes) { { name: 'Test User name', email: 'email@mail.com', password: '12345678', password_confirmation: '12345678' } }
 
     context 'when the request is valid' do
-      before { post '/users', params: valid_attributes }
+      before { post '/api/v1/users', params: valid_attributes }
 
       it 'creates a user' do
         expect(json['user']['name']).to eq('Test User name')
@@ -56,7 +56,7 @@ RSpec.describe "Users", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/users', params: { name: user.name } }
+      before { post '/api/v1/users', params: { name: user.name } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -74,7 +74,7 @@ RSpec.describe "Users", type: :request do
     let(:valid_attributes) { { name: 'New User name' } }
 
     context 'when the record exists' do
-      before { put "/users/#{user_id}", params: valid_attributes, headers: { 'Authorization' => token } }
+      before { put "/api/v1/users/#{user_id}", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'updates the record' do
         expect(json['user']['name']).to eq('New User name')
@@ -93,9 +93,9 @@ RSpec.describe "Users", type: :request do
       let!(:admin) { create(:user, :admin) }
 
       before do
-        post '/authenticate', params: { email: admin.email, password: '12345678' }
+        post '/api/v1/authenticate', params: { email: admin.email, password: '12345678' }
         admin_token = json['auth_token']
-        delete "/users/#{user_id}", params: {}, headers: { 'Authorization' => admin_token }
+        delete "/api/v1/users/#{user_id}", params: {}, headers: { 'Authorization' => admin_token }
       end
 
       it 'returns status code 204' do
@@ -106,7 +106,7 @@ RSpec.describe "Users", type: :request do
     context 'when current_user not admin' do
 
       before do
-        delete "/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
+        delete "/api/v1/users/#{user_id}", params: {}, headers: { 'Authorization' => token }
       end
 
       it 'returns status code 403' do

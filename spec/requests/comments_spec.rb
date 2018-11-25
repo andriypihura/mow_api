@@ -5,7 +5,7 @@ RSpec.describe "Comments", type: :request do
   let!(:recipe) { comment.recipe }
   let!(:user) { comment.user }
   let!(:token) do
-    post '/authenticate', params: { email: user.email, password: '12345678' }
+    post '/api/v1/authenticate', params: { email: user.email, password: '12345678' }
     json['auth_token']
   end
 
@@ -15,7 +15,7 @@ RSpec.describe "Comments", type: :request do
     let(:valid_attributes) { { message: "Test message", user_id: user.id } }
 
     context 'when the request is valid' do
-      before { post "/recipes/#{recipe.id}/comments", params: valid_attributes, headers: { 'Authorization' => token } }
+      before { post "/api/v1/recipes/#{recipe.id}/comments", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a comment' do
         expect(json['message']).to eq("Test message")
@@ -28,7 +28,7 @@ RSpec.describe "Comments", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post "/recipes/#{recipe.id}/comments", params: {}, headers: { 'Authorization' => token } }
+      before { post "/api/v1/recipes/#{recipe.id}/comments", params: {}, headers: { 'Authorization' => token } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -46,7 +46,7 @@ RSpec.describe "Comments", type: :request do
     let(:valid_attributes) { { message: "updated message" } }
 
     context 'when the record exists' do
-      before { put "/recipes/#{recipe.id}/comments/#{comment.id}", params: valid_attributes, headers: { 'Authorization' => token } }
+      before { put "/api/v1/recipes/#{recipe.id}/comments/#{comment.id}", params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'updates the record' do
         expect(json['message']).to eq("updated message")
@@ -60,7 +60,7 @@ RSpec.describe "Comments", type: :request do
 
   # Test suite for DELETE /comments/:id
   describe 'DELETE /comments/:id' do
-    before { delete "/recipes/#{recipe.id}/comments/#{comment.id}", params: {}, headers: { 'Authorization' => token } }
+    before { delete "/api/v1/recipes/#{recipe.id}/comments/#{comment.id}", params: {}, headers: { 'Authorization' => token } }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

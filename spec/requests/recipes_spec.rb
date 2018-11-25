@@ -5,12 +5,12 @@ RSpec.describe "Recipes", type: :request do
   let!(:recipes) { create_list(:recipe, 10) }
   let(:recipe_id) { recipes.first.id }
   let!(:token) do
-    post '/authenticate', params: { email: user.email, password: '12345678' }
+    post '/api/v1/authenticate', params: { email: user.email, password: '12345678' }
     json['auth_token']
   end
 
   describe "GET /recipes" do
-    before { get '/recipes?page=1' }
+    before { get '/api/v1//recipes?page=1' }
 
     it 'returns recipes' do
       expect(json).not_to be_empty
@@ -28,7 +28,7 @@ RSpec.describe "Recipes", type: :request do
 
     context 'when the record exists' do
       before do
-        get "/recipes/#{public_recipe.id}"
+        get "/api/v1/recipes/#{public_recipe.id}"
       end
 
       it 'returns the recipe' do
@@ -45,7 +45,7 @@ RSpec.describe "Recipes", type: :request do
       let(:recipe_id) { 1000 }
 
       before do
-        get "/recipes/#{recipe_id}"
+        get "/api/v1/recipes/#{recipe_id}"
       end
 
       it 'returns status code 404' do
@@ -69,7 +69,7 @@ RSpec.describe "Recipes", type: :request do
           text: '322'
         }
       end
-      before { post '/recipes', params: valid_attributes, headers: { 'Authorization' => token } }
+      before { post '/api/v1/recipes', params: valid_attributes, headers: { 'Authorization' => token } }
 
       it 'creates a recipe' do
         expect(json['recipe']['title']).to eq('Learn Elm')
@@ -81,7 +81,7 @@ RSpec.describe "Recipes", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/recipes', params: { user_id: user.id }, headers: { 'Authorization' => token } }
+      before { post '/api/v1/recipes', params: { user_id: user.id }, headers: { 'Authorization' => token } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -101,8 +101,8 @@ RSpec.describe "Recipes", type: :request do
 
     context 'when the record exists' do
       before do
-        post '/authenticate', params: { email: user_recipe.user.email, password: '12345678' }
-        put "/recipes/#{user_recipe.id}", params: valid_attributes, headers: { 'Authorization' => json['auth_token'] }
+        post '/api/v1/authenticate', params: { email: user_recipe.user.email, password: '12345678' }
+        put "/api/v1/recipes/#{user_recipe.id}", params: valid_attributes, headers: { 'Authorization' => json['auth_token'] }
       end
 
       it 'updates the record' do
@@ -120,9 +120,9 @@ RSpec.describe "Recipes", type: :request do
     let!(:admin) { create(:user, :admin) }
 
     before do
-      post '/authenticate', params: { email: admin.email, password: '12345678' }
+      post '/api/v1/authenticate', params: { email: admin.email, password: '12345678' }
       admin_token = json['auth_token']
-      delete "/recipes/#{recipe_id}", params: {}, headers: { 'Authorization' => admin_token }
+      delete "/api/v1/recipes/#{recipe_id}", params: {}, headers: { 'Authorization' => admin_token }
     end
 
     it 'returns status code 200' do
