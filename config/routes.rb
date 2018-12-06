@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  mount Logster::Web => '/logs'
 
   namespace :api do
     namespace :v1 do
