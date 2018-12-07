@@ -9,6 +9,7 @@
 * Test coverage - 95.8%
 * SOLID compliant
 * DB - postgresql
+* [Resilience](https://github.com/andriypihura/mow_api/wiki/Resilience)
 * [Telemetry and Monitoring | NewRelic](https://github.com/andriypihura/mow_api/wiki/Telemetry-and-Monitoring-%7C-NewRelic)
 * [Available routes](https://github.com/andriypihura/mow_api/wiki/Routes)
 * [Functional spec](https://github.com/andriypihura/mow_api/wiki/Functional-spec)
