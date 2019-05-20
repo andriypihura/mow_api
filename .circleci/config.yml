@@ -1,7 +1,3 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
 version: 2
 jobs:
   build:
@@ -15,8 +11,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - mow_api-dependencies-{{ checksum "Gemfile.lock" }}
-
+            - mow-dependencies-{{ checksum "Gemfile.lock" }}
+      - run: gem update --system
+      - run: gem install bundler
       - run:
           name: install dependencies
           command: |
@@ -25,30 +22,18 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-
-      # Database setup
-      - run: bundle exec rake db:create
-      - run: bundle exec rake db:schema:load
-
-      # run tests!
+          key: mow-dependencies-{{ checksum "Gemfile.lock" }}
+      - run: |-
+          mkdir -p config && echo 'test:
+            database: circle_ruby_test
+            encoding: utf8
+            adapter: postgresql
+            pool: 5
+            timeout: 5000
+            username: root
+            host: localhost' > config/database.yml
+      - run:
+          command: RAILS_ENV=test bundle exec rake db:setup
       - run:
           name: run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | \
-              circleci tests split --split-by=timings)"
-
-            bundle exec rspec \
-              --format progress \
-              --format RspecJunitFormatter \
-              --out /tmp/test-results/rspec.xml \
-              --format progress \
-              $TEST_FILES
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+          command: bundle exec rspec --format progress
