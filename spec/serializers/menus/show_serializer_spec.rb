@@ -7,7 +7,7 @@ RSpec.describe 'Menus::ShowSerializer' do
   let(:menu_items) { menu.menu_items.map { |menu_item| MenuItemSerializer.new(menu_item).as_json } }
 
   let(:attributes_to_serialize) do
-    %i[id title created_at updated_at color]
+    %i[id title created_at updated_at color calories visibility]
   end
 
   describe '#as_json' do

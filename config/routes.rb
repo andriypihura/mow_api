@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       post 'authenticate', to: 'authentication#authenticate'
       get 'checkauth', to: 'authentication#checkauth'
+      post 'filter', to: 'filter#filter'
 
       resources :users, only: [:create, :show, :update, :destroy] do
         resources :menus do
