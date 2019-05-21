@@ -1,5 +1,5 @@
 class Api::V1::RecipesController < ApplicationController
-  skip_before_action :authenticate_request, only: [:index, :show, :filter]
+  skip_before_action :authenticate_request, only: [:index, :show]
   before_action :find_current_user, only: [:show]
   before_action :set_recipe, only: [:show, :update, :destroy]
   before_action :set_user, only: [:create]
@@ -80,16 +80,6 @@ class Api::V1::RecipesController < ApplicationController
     end
   end
 
-  # GET /recipes/filrer(:params)
-  def filter
-    recipes = Recipe.filter_by(filter_params)
-                    .paginate(page: params[:page], per_page: 20)
-    json_response(
-      recipes: Recipes::PreviewSerializer.new(recipes).as_json,
-      pageCount: recipes.total_pages
-    )
-  end
-
   private
 
   def upload_image
@@ -107,15 +97,6 @@ class Api::V1::RecipesController < ApplicationController
 
   def set_user
     @user = User.find(params[:user_id])
-  end
-
-  def filter_params
-    params.permit(:title,
-                  :time_consuming_from,
-                  :time_consuming_to,
-                  :calories_from,
-                  :calories_to,
-                  :complexity)
   end
 
   def recipe_params
