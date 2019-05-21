@@ -4,9 +4,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.4.2-node
       - image: circleci/postgres:9.6.2-alpine
-
     working_directory: ~/andriypihura/mow_api
-
     steps:
       - checkout
       - restore_cache:
@@ -37,6 +35,15 @@ jobs:
       - run:
           name: run tests
           command: bundle exec rspec --format progress
+  deploy:
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - run:
+          name: Deploy Master to Heroku
+          command: |
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 workflows:
   version: 2
   build-deploy:
