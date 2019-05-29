@@ -60,6 +60,6 @@ class Api::V1::MenusController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def menu_params
-    params.permit(:title, :visibility, :user_id)
+    params.permit(:title, :user_id)
   end
 end

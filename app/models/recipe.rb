@@ -7,8 +7,6 @@ class Recipe < ApplicationRecord
   validates :ingredients, presence: true
   validates :text, presence: true
 
-  after_commit :update_menu_calories, if: Proc.new { |record| record.calories_changed? }
-
   scope :visible, -> { where(visibility: 'public') }
   scope :by_type, lambda { |type, user_id|
     if type == 'my'
@@ -51,9 +49,5 @@ class Recipe < ApplicationRecord
 
   def liked_by_user(user)
     likes.active.where(user_id: user&.id).any?
-  end
-
-  def update_menu_calories
-    MenuItem.where(recipe_id: id).map(&:menu).uniq.each(&:update_calories)
   end
 end
