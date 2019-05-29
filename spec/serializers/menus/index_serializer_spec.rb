@@ -6,7 +6,7 @@ RSpec.describe 'Menus::ShowSerializer' do
   let(:subject) { Menus::IndexSerializer.new(menus) }
 
   let(:attributes_to_serialize) do
-    %i[id title created_at updated_at color calories visibility]
+    %i[id title created_at updated_at color]
   end
 
   describe '#as_json' do

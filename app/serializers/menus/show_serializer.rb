@@ -16,7 +16,7 @@ module Menus
     private
 
     def attributes
-      %i[id title created_at updated_at color calories visibility]
+      %i[id title created_at updated_at color]
     end
 
     def menu_items
