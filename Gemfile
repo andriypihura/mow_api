@@ -14,7 +14,7 @@ gem 'rails', '~> 5.1.4'
 gem 'pg'
 gem 'rubocop', '~> 0.52.1'
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 5.5'
 gem 'will_paginate'
 
 # gem 'newrelic_rpm'
